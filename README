@@ -1,1 +1,29 @@
-my readme content
+A quick and simple way to execute a command on a subset or all servers within your enterprise.  The current version will only support Linux and is a WIP, the BETA version is not yet complete.
+
+The ultimiate goal will be that you should be able to launch and get a reply to a given command such as "hostname" 
+on all machines in your enterprise with sub-second response times.  Regardless of the number of servers....  
+  (Dependant on the runtime of the command being executed)
+
+Each Server in your enterprise:
+ - has a small daemon running on it
+
+Workflow:
+ 1) Client or Administrator sends a message to a predefined JMS topic containing a command to be run 
+    (topics & headers will be used to restrict which servers)
+ 2) Remote Servers see JMS message, execute command
+ 3) Remote Server sends JMS reply with output of command
+ 4) Client saves output/rc to file/database
+ 
+Design guidelines:
+-----------------
+ Very small memory footprint:
+    Perl has been chosen for this reason, my first quick test showed only 4M/Memory for the server process
+
+ Good shell interaction and very fast startup time for the foker: 
+    Perl interacts nicely with the Unix/Linux POSIX layer
+
+ Ability to restart the "server" while subprocesses are in process (with zero impact):
+    This is the main reason why I chose to recursively call teh perl routine in a separate process.
+
+ Must work with any JMS provider:
+    Plan on using Stomp
